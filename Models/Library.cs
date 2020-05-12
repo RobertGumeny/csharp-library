@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 
@@ -16,21 +17,89 @@ namespace console_library.Models
       Name = name;
       Books = new List<Book> { };
     }
-
-    public void LibraryGreeting()
+    public void LibrarySetup()
     {
-      System.Console.WriteLine($"Welcome to the {Location} Library!");
+      Console.WriteLine($"Welcome to the {Location} Library!");
+      Book eloquentJavaScript = new Book("Eloquent Javascript", "Marijn Haverbeke");
+      Book introducingPython = new Book("Introducing Python", "Bill Lubanovic");
+      Book withoutRemorse = new Book("Without Remorse", "Tom Clancy");
+      Book bourneIdentity = new Book("The Bourne Identity", "Robert Ludlum");
+
+      Books.Add(eloquentJavaScript);
+      Books.Add(introducingPython);
+      Books.Add(withoutRemorse);
+      Books.Add(bourneIdentity);
     }
-    public void PrintBooks()
+
+    public void PrintAvailableBooks()
     {
       for (int i = 0; i < Books.Count; i++)
       {
-        System.Console.WriteLine($"{i + 1}) {Books[i].Title} - {Books[i].Author}");
+        Book book = Books[i];
+        if (book.Available)
+        {
+          Console.WriteLine($"{i + 1}) {Books[i].Title} - {Books[i].Author}");
+        }
       }
     }
-    public void AddBook(Book book)
+    public void PrintReturnableBooks()
     {
-      Books.Add(book);
+      for (int i = 0; i < Books.Count; i++)
+      {
+        Book book = Books[i];
+        if (!book.Available)
+        {
+          Console.WriteLine($"{i + 1}) {Books[i].Title} - {Books[i].Author}");
+        }
+      }
+    }
+    public void CheckoutBook()
+    {
+      PrintAvailableBooks();
+      Console.WriteLine("Which book would you like to check out?");
+      string input = Console.ReadLine();
+      int index;
+      if (int.TryParse(input, out index) != false && index - 1 < Books.Count && index - 1 > -1)
+      {
+        Book book = Books[index - 1];
+        if (!book.Available)
+        {
+          Console.WriteLine("That book has already been checked out!");
+        }
+        else
+        {
+          book.Available = false;
+          Console.WriteLine($"You have checked out {book.Title}");
+        }
+      }
+      else
+      {
+        Console.WriteLine("Invalid Book Selection");
+      }
+    }
+    public void ReturnBook()
+    {
+      PrintReturnableBooks();
+      Console.WriteLine("Which book would you like to return?");
+      string input = Console.ReadLine();
+      int index;
+      if (int.TryParse(input, out index) != false && index - 1 < Books.Count && index - 1 > -1)
+      {
+        Book book = Books[index - 1];
+        if (book.Available)
+        {
+          Console.WriteLine("That book has already been returned!");
+        }
+        else
+        {
+          book.Available = true;
+          Console.WriteLine($"You have returned {book.Title}");
+        }
+      }
+      else
+      {
+        Console.WriteLine("Invalid Book Selection");
+      }
     }
   }
 }
